@@ -67,3 +67,5 @@ function animate(){
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
+
+Example at Blank2275.github.io/Three.js-FPS-Controller
