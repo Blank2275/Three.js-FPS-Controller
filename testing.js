@@ -1,6 +1,20 @@
 var scene, camera, renderer;
 
-scene = new THREE.Scene();
+var scene = new THREE.Scene();
+var url = "https://raw.githubusercontent.com/Blank2275/threejs-scenes/master/scene.gltf"
+
+var loader = new THREE.GLTFLoader();
+loader.load(url, (gltf) => {
+    console.log(gltf.scene);
+    gltf.scene.traverse((object) => {
+        object.position.y -= 10;
+        object.updateMatrix();
+        object.updateMatrixWorld();
+        
+    })
+    scene.add(gltf.scene);
+    scene.updateMatrixWorld();
+})
 
 var pointLight = new THREE.PointLight("white", 1);
 scene.add(pointLight);
@@ -18,8 +32,9 @@ renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 
 //make a fps controller
-var player = new FPSController({scene: scene, camera: camera, renderer: renderer, maxSteepness : Math.PI / 6});
+var player = new FPSController({scene: scene, camera: camera, renderer: renderer, maxSteepness : Math.PI / 3, y: 10});
 
+/*
 //add cube to scene
 var geometry = new THREE.BoxGeometry(25, 2, 25);
 var cover = new THREE.MeshPhongMaterial({color:"green"});
@@ -46,13 +61,14 @@ box.rotation.z = -Math.PI / 8
 box.layers.enable(20);
 scene.add(box);
 
-geometry = new THREE.SphereGeometry(20, 30, 30);
-cover = new THREE.MeshPhongMaterial({color:"blue"});
+geometry = new THREE.SphereGeometry(20, 10, 10);
+cover = new THREE.MeshPhongMaterial({color:"blue", wireframe: true});
 sphere = new THREE.Mesh(geometry, cover);
 sphere.position.z = 17.5;
 sphere.position.y = -15;
 sphere.layers.enable(20);
 scene.add(sphere);
+*/
 
 animate();
 
