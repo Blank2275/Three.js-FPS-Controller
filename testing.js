@@ -18,7 +18,7 @@ renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 
 //make a fps controller
-var player = new FPSController(scene, camera, renderer, maxSteepness = Math.PI);
+var player = new FPSController({scene: scene, camera: camera, renderer: renderer, maxSteepness : Math.PI / 6});
 
 //add cube to scene
 var geometry = new THREE.BoxGeometry(25, 2, 25);

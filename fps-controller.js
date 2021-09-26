@@ -1,30 +1,30 @@
 class FPSController{
-    constructor(scene, camera, renderer, x = 0, y = 0, z = 0, sensitivity = 130, movementSpeed = 0.2, raycastLayer = 20, gravity = 0.02, height = 1.5, jumpForce = .5, maxSteepness = 0.7){
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    constructor(info){
+        this.x = info.x || 0;
+        this.y = info.y || 0;
+        this.z = info.z || 0;
         this.xAngle = 0;
         this.yAngle = 0;
-        this.camera = camera;
-        this.camera.position.set(x, y, z);
-        this.sensitivity = sensitivity;
-        this.movementSpeed = movementSpeed;
-        this.maxSteepness = maxSteepness;
-        this.renderer = renderer;
+        this.camera = info.camera;
+        this.camera.position.set(this.x, this.y, this.z);
+        this.sensitivity = info.sensitivity || 130;
+        this.movementSpeed = info.movementSpeed || .2;
+        this.maxSteepness = info.maxSteepness || .7;
+        this.renderer = info.renderer;
         this.keysDown = {}
-        this.scene = scene;
-        this.raycastLayer = raycastLayer;
-        this.gravity = gravity;
-        this.height = height;
-        this.jumpForce = jumpForce;
+        this.scene = info.scene;
+        this.raycastLayer = info.raycastLayer || 20;
+        this.gravity = info.gravity || .02;
+        this.height = info.height || 1.5;
+        this.jumpForce = info.jumpForce || .5;
 
-        renderer.domElement.addEventListener("mousemove", (event) => this.mousemove(event));
-        renderer.domElement.tabIndex = "1";
-        renderer.domElement.addEventListener("keydown", (event) => this.keydown(event));
-        renderer.domElement.addEventListener("keyup", (event) => this.keyup(event));
-        renderer.domElement.requestPointerLock = renderer.domElement.requestPointerLock || renderer.domElement.mozRequestPointerLock;
-        renderer.domElement.addEventListener("click", () => {
-            renderer.domElement.requestPointerLock();
+        this.renderer.domElement.addEventListener("mousemove", (event) => this.mousemove(event));
+        this.renderer.domElement.tabIndex = "1";
+        this.renderer.domElement.addEventListener("keydown", (event) => this.keydown(event));
+        this.renderer.domElement.addEventListener("keyup", (event) => this.keyup(event));
+        this.renderer.domElement.requestPointerLock = this.renderer.domElement.requestPointerLock || this.renderer.domElement.mozRequestPointerLock;
+        this.renderer.domElement.addEventListener("click", () => {
+            this.renderer.domElement.requestPointerLock();
         });
 
         //set raycaster looking down
