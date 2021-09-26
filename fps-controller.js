@@ -35,6 +35,7 @@ class FPSController{
         //this.topRaycaster.layers.set(this.raycastLayer);
         this.bottomRaycaster = new THREE.Raycaster();
         //this.bottomRaycaster.layers.set(this.raycastLayer);
+        this.upRaycaster = new THREE.Raycaster();
         //falling speed
         this.yVelocity = 0;
         this.onSlope = false;
@@ -89,6 +90,18 @@ class FPSController{
         if(this.grounded && this.keysDown["Space"]){
             this.yVelocity = this.jumpForce;
             this.move(0, 1, 0);
+        }
+        if(!this.grounded){
+            var up = new THREE.Vector3(0, 1, 0);
+            this.upRaycaster.set(this.camera.position, up);
+            var upIntersections = this.upRaycaster.intersectObjects(this.getAllObjectsInScene());
+            for(var intersection of upIntersections){
+                console.log(intersection);
+                if(intersection.distance < this.yVelocity){
+                    this.move(0, -this.yVelocity, 0);
+                    this.yVelocity = 0;
+                }
+            }
         }
         this.grounded = false;
 
