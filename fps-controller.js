@@ -1,5 +1,5 @@
 class FPSController{
-    constructor(scene, camera, renderer, x = 0, y = 0, z = 0, sensitivity = 130, movementSpeed = 0.2, raycastLayer = 20, gravity = 0.02, height = 1.5, jumpForce = .5){
+    constructor(scene, camera, renderer, x = 0, y = 0, z = 0, sensitivity = 130, movementSpeed = 0.2, raycastLayer = 20, gravity = 0.02, height = 1.5, jumpForce = .5, maxSteepness = 0.7){
         this.x = x;
         this.y = y;
         this.z = z;
@@ -9,6 +9,7 @@ class FPSController{
         this.camera.position.set(x, y, z);
         this.sensitivity = sensitivity;
         this.movementSpeed = movementSpeed;
+        this.maxSteepness = maxSteepness;
         this.renderer = renderer;
         this.keysDown = {}
         this.scene = scene;
@@ -29,9 +30,16 @@ class FPSController{
         //set raycaster looking down
         this.downRaycaster = new THREE.Raycaster();
         this.downRaycaster.layers.set(this.raycastLayer);
-
+        //set top and bottom raycasts
+        this.topRaycaster = new THREE.Raycaster();
+        this.topRaycaster.layers.set(this.raycastLayer);
+        this.bottomRaycaster = new THREE.Raycaster();
+        this.bottomRaycaster.layers.set(this.raycastLayer);
         //falling speed
         this.yVelocity = 0;
+        this.onSlope = false;
+        this.movingX = 0;
+        this.movingZ = 0;
     }
 
     update(){
@@ -56,6 +64,10 @@ class FPSController{
         z *= this.movementSpeed;
         
         if(moving){
+            if(!this.onSlope){
+                this.movingX = x;
+                this.movingZ = z;
+            }
             this.move(x, 0, z);
         }
 
@@ -64,9 +76,8 @@ class FPSController{
         var down = new THREE.Vector3(0,-1,0)
         this.downRaycaster.set(this.camera.position, down);
         const intersects = this.downRaycaster.intersectObjects(this.scene.children);
-        this.grounded = false;
         for(var intersect of intersects){
-            if(intersect.distance < this.height){
+            if(intersect.distance < this.height && !this.onSlope){
                 this.yVelocity = 0;
                 this.grounded = true;
             }
@@ -78,7 +89,69 @@ class FPSController{
         if(this.grounded && this.keysDown["Space"]){
             this.yVelocity = this.jumpForce;
             this.move(0, 1, 0);
-            console.log("Jump")
+        }
+        this.grounded = false;
+
+        //check for collision with walls
+        var forward = new THREE.Vector3(this.movingX, 0, this.movingZ);
+        var cameraPos = this.camera.position;
+        var bottomPosition = new THREE.Vector3(cameraPos.x, cameraPos.y - this.height + 0.2, cameraPos.z);
+        this.topRaycaster.set(cameraPos, forward);
+        this.bottomRaycaster.set(bottomPosition, forward);
+        var bottomIntersections = this.bottomRaycaster.intersectObjects(this.scene.children);
+        var topIntersections = this.bottomRaycaster.intersectObjects(this.scene.children);
+        
+        var topIntersection = false;
+        var bottomIntersection = false;
+
+        for(var intersection of topIntersections){
+            if(intersection.distance <= 2.5){
+                topIntersection = intersection;
+            }
+        }
+        for(var intersection of bottomIntersections){
+            if(intersection.distance <= 1.5){
+                bottomIntersection = intersection;
+            }
+        }
+        if(bottomIntersection){
+            this.onSlope = true;
+            this.grounded = true;
+            var rotation = bottomIntersection.object.rotation;
+            var axis = new THREE.Vector3(0, 1, 0);
+            var normal = bottomIntersection.face.normal.applyAxisAngle(axis, angle);
+            var qRot = new THREE.Quaternion()
+            qRot.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+            normal = new THREE.Euler().setFromQuaternion(qRot);
+            rotation.x += normal.x;
+            rotation.y += normal.y;
+            rotation.z += normal.z;
+            console.log(1)
+            if(rotation.x > this.maxSteepness || rotation.z > this.maxSteepness || rotation.x < -this.maxSteepness || rotation.z < -this.maxSteepness){
+                this.move(-this.movingX * 2, 0, -this.movingZ * 2)
+            }
+            console.log("climb");
+            //if it is not to steep, teleport player up a lot and then teleport them to the ground
+            cameraPos.y += 3;
+            this.downRaycaster.set(cameraPos, down);
+            var downIntersections = this.downRaycaster.intersectObjects(this.scene.children);
+            var closest = 10000;
+            var closestIntersection;
+            for(var intersection of downIntersections){
+                if(intersection.distance < closest){
+                    closest = intersection.distance;
+                    closestIntersection = intersection;
+                }
+            }
+            if(closest != 10000){
+                closestIntersection.point.y += this.height + .2;
+                this.y = closestIntersection.point.y;
+                this.camera.position.y = this.y;
+                this.yVelocity = this.gravity;
+            }
+                
+        }else{
+            this.onSlope = false;
         }
     }
 
@@ -164,4 +237,8 @@ class FPSController{
                 break;
         }
     }
+}
+
+function lerp(v0, v1, t){
+    return (1 - t) * v0 + t * v1;
 }
