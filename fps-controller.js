@@ -126,11 +126,9 @@ class FPSController{
             rotation.x += normal.x;
             rotation.y += normal.y;
             rotation.z += normal.z;
-            console.log(1)
             if(rotation.x > this.maxSteepness || rotation.z > this.maxSteepness || rotation.x < -this.maxSteepness || rotation.z < -this.maxSteepness){
                 this.move(-this.movingX * 2, 0, -this.movingZ * 2)
             }
-            console.log("climb");
             //if it is not to steep, teleport player up a lot and then teleport them to the ground
             cameraPos.y += 3;
             this.downRaycaster.set(cameraPos, down);
