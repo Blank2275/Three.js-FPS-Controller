@@ -5,7 +5,6 @@ var url = "https://raw.githubusercontent.com/Blank2275/threejs-scenes/master/sce
 
 var loader = new THREE.GLTFLoader();
 loader.load(url, (gltf) => {
-    console.log(gltf.scene);
     gltf.scene.traverse((object) => {
         object.position.y -= 10;
         object.updateMatrix();
