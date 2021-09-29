@@ -9,6 +9,7 @@ class FPSController{
         this.camera.position.set(this.x, this.y, this.z);
         this.sensitivity = info.sensitivity || 130;
         this.movementSpeed = info.movementSpeed || .2;
+        this.sprintingSpeed = info.sprintingSpeed || .4;
         this.maxSteepness = info.maxSteepness || .7;
         this.renderer = info.renderer;
         this.keysDown = {}
@@ -48,7 +49,8 @@ class FPSController{
         var moving = false;
         var angle = 0;
         var keysDown = this.keysDown;
-
+        var movementSpeed = this.movementSpeed;
+        
         if(keysDown["A"] || keysDown["W"] || keysDown["S"] || keysDown["D"]){
             moving = true;
         }
@@ -59,11 +61,14 @@ class FPSController{
         } else if(keysDown["D"]){
             angle += Math.PI / 2;
         }
+        if(keysDown["Shift"]){
+            movementSpeed = this.sprintingSpeed;
+        }
         var xRotation = this.xAngle + angle;
         var x = Math.cos(xRotation);
         var z = Math.sin(xRotation);
-        x *= this.movementSpeed;
-        z *= this.movementSpeed;
+        x *= movementSpeed;
+        z *= movementSpeed;
         
         if(moving){
             if(!this.onSlope){
@@ -115,7 +120,7 @@ class FPSController{
         var bottomIntersection = false;
 
         for(var intersection of bottomIntersections){
-            if(intersection.distance <= 1.5){
+            if(intersection.distance <= 1.5 + movementSpeed){
                 bottomIntersection = intersection;
             }
         }
@@ -142,8 +147,9 @@ class FPSController{
                 rotatedNormal.x += normal.x;
                 rotatedNormal.y += normal.y;
                 rotatedNormal.z += normal.z;
-                position.x += rotatedNormal.x / 3;
-                position.z += rotatedNormal.z / 3;
+                var offsetDivisor = 5 * movementSpeed;
+                position.x += rotatedNormal.x / offsetDivisor;
+                position.z += rotatedNormal.z / offsetDivisor;
                 
                 //if in corner
                 var inCorner = false;
@@ -166,7 +172,7 @@ class FPSController{
                         normal.x += rotation.x;
                         normal.y += rotation.y;
                         normal.z += rotation.z;
-                        this.setPosition(intersection.point.x + normal.x / 3, position.y + bottomOffset, intersection.point.z + normal.z / 3)
+                        this.setPosition(intersection.point.x + normal.x / offsetDivisor, position.y + bottomOffset, intersection.point.z + normal.z / offsetDivisor)
                     }
                 }
                 if(!inCorner){
@@ -270,6 +276,12 @@ class FPSController{
             case "Space":
                 this.keysDown["Space"] = true;
                 break;
+            case "ShiftLeft":
+                this.keysDown["Shift"] = true;
+                break;
+            case "ShiftRight":
+                this.keysDown["Shift"] = true;
+                break;
         }
     }
     keyup(event){
@@ -288,6 +300,12 @@ class FPSController{
                 break;
             case "Space":
                 this.keysDown["Space"] = false;
+                break;
+            case "ShiftLeft":
+                this.keysDown["Shift"] = false;
+                break;
+            case "ShiftRight":
+                this.keysDown["Shift"] = false;
                 break;
         }
     }
