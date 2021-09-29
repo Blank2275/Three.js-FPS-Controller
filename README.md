@@ -1,6 +1,5 @@
 # Three.js-FPS-Controller
-It is a simple first person controller for three.js, it is still under devvelopment. It can climb up slopes and walk around but it would clip through ceilings currently and it is a little jittery.
-It does not support going up ledges or stairs, you would have to add an invisible object on top of the stairs at an angle so it would go up it like a slope.
+It is a simple first person controller for three.js, it is still under devvelopment. It can climb up slopes and walk around. It does not support going up ledges or stairs, you would have to add an invisible object on top of the stairs at an angle so it would go up it like a slope. Any suggestions on what I should add to it to make it better is valuable. Sprinting will be added next and in the future sound effects.
 
 Here is an example usage
 
