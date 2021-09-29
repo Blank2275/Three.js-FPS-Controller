@@ -1,7 +1,7 @@
 var scene, camera, renderer;
 
 var scene = new THREE.Scene();
-var url = "https://raw.githubusercontent.com/Blank2275/threejs-scenes/master/scene.gltf"
+var url = "https://raw.githubusercontent.com/Blank2275/threejs-scenes/master/secondArena.gltf"
 
 var loader = new THREE.GLTFLoader();
 loader.load(url, (gltf) => {
@@ -15,7 +15,7 @@ loader.load(url, (gltf) => {
     scene.updateMatrixWorld();
 })
 
-var pointLight = new THREE.PointLight("white", 1);
+var pointLight = new THREE.PointLight("blue", 0.6);
 scene.add(pointLight);
 var ambientLight = new THREE.AmbientLight("white", 0.6);
 scene.add(ambientLight);
@@ -24,7 +24,7 @@ var width = window.innerWidth / 1.1;
 var height = window.innerHeight / 1.1;
 var aspect = width / height;
 
-camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 100)
+camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000)
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);

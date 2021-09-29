@@ -112,7 +112,6 @@ class FPSController{
         var bottomPosition = new THREE.Vector3(cameraPos.x, cameraPos.y - bottomOffset, cameraPos.z);
         this.bottomRaycaster.set(bottomPosition, forward);
         var bottomIntersections = this.bottomRaycaster.intersectObjects(this.getAllObjectsInScene());
-        console.log(bottomIntersections);
         var bottomIntersection = false;
 
         for(var intersection of bottomIntersections){
@@ -168,7 +167,6 @@ class FPSController{
                         normal.y += rotation.y;
                         normal.z += rotation.z;
                         this.setPosition(intersection.point.x + normal.x / 3, position.y + bottomOffset, intersection.point.z + normal.z / 3)
-                        console.log("corner");
                     }
                 }
                 if(!inCorner){
