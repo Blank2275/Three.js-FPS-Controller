@@ -3,6 +3,7 @@ It is a simple first person controller for three.js, it is still under devvelopm
 
 Here is an example usage
 
+```js
 var scene, camera, renderer;
 
 scene = new THREE.Scene();
@@ -66,5 +67,5 @@ function animate(){
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
-
+```
 Example at Blank2275.github.io/Three.js-FPS-Controller
